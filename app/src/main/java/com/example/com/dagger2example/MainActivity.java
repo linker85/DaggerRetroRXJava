@@ -8,12 +8,20 @@ import android.view.View;
 
 import com.example.com.dagger2example.Model.User;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -34,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     Observable<List<User>> retroModule;
 
+    @Inject
+    OkHttpClient okHttpClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +56,30 @@ public class MainActivity extends AppCompatActivity {
                 myRetroModule(new MyRetroModule("11")).
                 build().
                 inject(this); // instance
+
+        try {
+            Request request = new Request.Builder()
+                    .url("http://www.google.com")
+                    .build();
+            Response responses = null;
+
+            try {
+                responses = okHttpClient.newCall(request).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String jsonData = responses.body().string();
+            JSONObject Jobject = new JSONObject(jsonData);
+            JSONArray Jarray = Jobject.getJSONArray("employees");
+
+            for (int i = 0; i < Jarray.length(); i++) {
+                JSONObject object     = Jarray.getJSONObject(i);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         retroModule
                 .subscribeOn(Schedulers.io())

@@ -7,6 +7,7 @@ import java.util.List;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -41,6 +42,11 @@ public class MyRetroModule {
     public Observable<List<User>> provideCreateLogin(Retrofit retrofit) {
         LoginRetrofitHelper.LoginService loginService = retrofit.create(LoginRetrofitHelper.LoginService.class);
         return loginService.getUsers(key);
+    }
+
+    @Provides
+    public OkHttpClient provideOkHttpClient() {
+        return new OkHttpClient();
     }
 
 
